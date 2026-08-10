@@ -1,12 +1,14 @@
-show databases;
-use example;
-show tables;
-
-
-drop table students;
-drop table marks;
+SHOW DATABASES;
+/* Delete and create new database example */
+DROP DATABASE IF EXISTS example;
+CREATE DATABASE example;
+USE example;
 
 /* SUBQUERIES */
+/* Delete and create new tables required */
+SHOW TABLES;
+DROP TABLE IF EXISTS students;
+DROP TABLE IF EXISTS marks;
 CREATE TABLE Students (
     StudentID INT PRIMARY KEY,
     Name VARCHAR(50),
@@ -67,9 +69,8 @@ FROM (
 ) AS Result;
 
 /* SET Operations */
-
-DROP TABLE Students2024;
-DROP TABLE Students2025;
+DROP TABLE IF EXISTS Students2024;
+DROP TABLE IF EXISTS Students2025;
 CREATE TABLE Students2024 (
     StudentID INT,
     Name VARCHAR(50)
@@ -118,4 +119,72 @@ WHERE Name NOT IN (
     FROM Students2025
 );
 
+/* Common Table Expression (CTE) */
+DROP TABLE IF EXISTS Employees;
+CREATE TABLE Employees (
+    EmpID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Department VARCHAR(30),
+    Salary DECIMAL(10,2)
+);
+INSERT INTO Employees (EmpID, Name, Department, Salary) VALUES
+(101, 'John',   'HR',      50000),
+(102, 'Alice',  'IT',      70000),
+(103, 'Bob',    'IT',      65000),
+(104, 'Emma',   'HR',      55000),
+(105, 'David',  'Finance', 80000),
+(106, 'Sophia', 'Finance', 75000),
+(107, 'James',  'IT',      70000),
+(108, 'Olivia', 'HR',      48000),
+(109, 'Liam',   'Finance', 72000),
+(110, 'Noah',   'IT',      62000);
 
+/* To check the average salary */
+/* IF MySQL version is 8.0+
+SELECT VERSION();
+WITH AvgSalary AS (
+    SELECT AVG(Salary) AS Avg_Sal
+    FROM Employees
+) SELECT * FROM AvgSalary;
+*/
+/* IF MySQL version is 5.7 or older */
+SELECT *
+FROM (
+    SELECT AVG(Salary) AS Avg_Sal
+    FROM Employees
+) AS AvgSalary;
+
+/* Find employees earning more than the average salary  */
+/* IF MySQL version is 8.0+
+SELECT VERSION();
+WITH AvgSalary AS
+(
+    SELECT AVG(Salary) AS AvgSalary
+    FROM Employees
+)
+SELECT
+    e.EmpID,
+    e.Name,
+    e.Department,
+    e.Salary
+FROM Employees e
+CROSS JOIN AvgSalary a
+WHERE e.Salary > a.AvgSalary;
+*/
+/* IF MySQL version is 5.7 or older */
+SELECT
+    e.EmpID,
+    e.Name,
+    e.Department,
+    e.Salary
+FROM Employees e
+CROSS JOIN (
+    SELECT AVG(Salary) AS AvgSalary
+    FROM Employees
+) a
+WHERE e.Salary > a.AvgSalary;
+
+/* Window Functions */
+SELECT Name, Salary,
+       ROW_NUMBER() OVER(ORDER BY Salary DESC) AS RowNum
+FROM Employees;
