@@ -4,6 +4,154 @@ DROP DATABASE IF EXISTS example;
 CREATE DATABASE example;
 USE example;
 
+/* Aggregate Functions and Grouping (DQL) */
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee (
+    EmpID INT PRIMARY KEY,
+    EmpName VARCHAR(50),
+    Department VARCHAR(30),
+    Designation VARCHAR(30),
+    Salary DECIMAL(10,2),
+    HireDate DATE
+);
+
+INSERT INTO Employee (EmpID, EmpName, Department, Designation, Salary, HireDate)
+VALUES
+(101, 'John',    'IT',      'Developer', 55000.00, '2022-01-15'),
+(102, 'Mary',    'HR',      'HR Manager', 60000.00, '2021-03-20'),
+(103, 'David',   'Finance', 'Accountant', 48000.00, '2020-07-10'),
+(104, 'Sarah',   'IT',      'Team Lead', 75000.00, '2019-11-05'),
+(105, 'James',   'Sales',   'Sales Executive', 42000.00, '2023-02-18'),
+(106, 'Priya',   'IT',      'Developer', 58000.00, '2022-09-01'),
+(107, 'Rahul',   'Finance', 'Financial Analyst', 52000.00, '2021-12-12'),
+(108, 'Anita',   'HR',      'Recruiter', 45000.00, '2023-06-25'),
+(109, 'Karthik', 'Sales',   'Sales Manager', 68000.00, '2020-04-08'),
+(110, 'Neha',    'Marketing', 'Marketing Executive', 50000.00, '2024-01-10');
+
+SELECT
+COUNT(*) AS Employees,
+SUM(Salary) AS TotalSalary,
+AVG(Salary) AS AverageSalary,
+MIN(Salary) AS LowestSalary,
+MAX(Salary) AS HighestSalary
+FROM Employee;
+
+SELECT
+Department,
+COUNT(*) AS Employees,
+SUM(Salary) AS TotalSalary,
+AVG(Salary) AS AverageSalary,
+MIN(Salary) AS LowestSalary,
+MAX(Salary) AS HighestSalary
+FROM Employee
+GROUP BY Department;
+
+/* GROUP BY Clause */
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(50),
+    department VARCHAR(30),
+    salary DECIMAL(10,2)
+);
+
+INSERT INTO employees (emp_id, emp_name, department, salary) VALUES
+(101, 'John',   'HR',       40000.00),
+(102, 'Priya',  'IT',       60000.00),
+(103, 'Rahul',  'HR',       45000.00),
+(104, 'Anita',  'IT',       70000.00),
+(105, 'Kiran',  'Sales',    50000.00),
+(106, 'David',  'Finance',  55000.00),
+(107, 'Meena',  'Sales',    48000.00),
+(108, 'Arun',   'IT',       65000.00),
+(109, 'Suresh', 'Finance',  52000.00),
+(110, 'Divya',  'HR',       42000.00);
+
+/* Count employees in each department */
+SELECT department, COUNT(*) AS employee_count
+FROM employees
+GROUP BY department;
+
+/* Total salary by department */
+SELECT department, SUM(salary) AS total_salary
+FROM employees
+GROUP BY department;
+
+/* Average salary by department */
+SELECT department, AVG(salary) AS avg_salary
+FROM employees
+GROUP BY department;
+
+/* Using HAVING with GROUP BY */
+SELECT department, COUNT(*) AS employee_count
+FROM employees
+GROUP BY department
+HAVING COUNT(*) > 1;
+
+
+/* JOINS */
+DROP TABLE IF EXISTS Student;
+CREATE TABLE Student(
+StudentID INT PRIMARY KEY,
+StudentName VARCHAR(50)
+);
+
+INSERT INTO Student(StudentID, StudentName)
+VALUES (1,  'Alice'),
+(2, 'Bob'),
+(3,  'Charlie'),
+(4,  'David');
+
+SELECT * FROM student;
+
+CREATE TABLE Enrollment (
+    StudentID INT,
+    Course VARCHAR(50)
+);
+
+INSERT INTO Enrollment (StudentID, Course)
+VALUES (1,  'Math'),
+(2, 'Science'),
+(5,  'English');
+
+SELECT * FROM Enrollment;
+
+/* INNER JOIN */
+SELECT Student.StudentID, Student.StudentName, Enrollment.Course
+FROM Student
+INNER JOIN Enrollment
+ON Student.StudentID = Enrollment.StudentID;
+
+/* LEFT JOIN */
+SELECT Student.StudentID, Student.StudentName, Enrollment.Course
+FROM Student
+LEFT JOIN Enrollment
+ON Student.StudentID = Enrollment.StudentID;
+
+/* RIGHT JOIN */
+SELECT Student.StudentID, Student.StudentName, Enrollment.Course
+FROM Student
+RIGHT JOIN Enrollment
+ON Student.StudentID = Enrollment.StudentID;
+
+/* FULL OUTER JOIN */
+SELECT Student.StudentID, Student.StudentName, Enrollment.Course
+FROM Student
+LEFT JOIN Enrollment
+ON Student.StudentID = Enrollment.StudentID
+
+UNION
+
+SELECT Student.StudentID, Student.StudentName, Enrollment.Course
+FROM Student
+RIGHT JOIN Enrollment
+ON Student.StudentID = Enrollment.StudentID;
+
+/* CROSS JOIN */
+SELECT Student.StudentName, Enrollment.Course
+FROM Student
+CROSS JOIN Enrollment;
+
 /* SUBQUERIES */
 /* Delete and create new tables required */
 SHOW TABLES;
