@@ -52,13 +52,13 @@ WHERE StudentID IN (
 );
 
 /* Correlated sub query */
-SELECT Name 
+SELECT Name
 FROM Students S
 WHERE EXISTS (
     SELECT *
     FROM Marks M
     WHERE S.StudentID = M.StudentID
-); 
+);
 
 /* Subquery in FROM Clause */
 SELECT AVG(Marks)
@@ -611,6 +611,7 @@ SAVEPOINT sp1;
  
 INSERT INTO Student (ID, Name, Age)
 VALUES (103, 'Charlie', 22);
+
 /* Check the table for entries */
 SELECT * FROM Student;
 /*
@@ -620,14 +621,15 @@ SELECT * FROM Student;
 ROLLBACK TO sp1;
 /* Check the table for entries */
 SELECT * FROM Student;
-/* Changes up to SAVEPOINT sp1
+/*
+ * Changes up to SAVEPOINT sp1
  * (records 101 and 102) are permanently saved.
  */
 COMMIT;
 
 /* UPDATE & ROLLBACK Example */
 START TRANSACTION;
- 
+
 UPDATE Student
 SET Age = 25
 WHERE ID = 101;
@@ -643,7 +645,7 @@ SELECT * FROM Student;
 
 /* UPDATE & COMMIT & ROLLBACK Example*/
 START TRANSACTION;
- 
+
 UPDATE Student
 SET Age = 25
 WHERE ID = 101;
@@ -659,4 +661,43 @@ SELECT * FROM Student;
 
 ROLLBACK;
 /* Check the table for entries */
+SELECT * FROM Student;
+
+/* Data Control Language */
+CREATE USER 'john'@'localhost'
+IDENTIFIED BY 'password123';
+
+SELECT User, Host FROM mysql.user;
+
+DROP TABLE IF EXISTS Student;
+CREATE TABLE Student
+(
+    ID INT PRIMARY KEY,
+    NAME VARCHAR(30),
+    Age INT
+);
+
+INSERT INTO Student (ID, Name, Age)
+VALUES (102, 'Bob', 21),
+(103, 'Charlie', 22);
+
+GRANT SELECT
+ON example.Student
+TO 'john'@'localhost';
+
+/*
+ * Use select/update query from user john
+ * create another session with username = "john"
+ * and password = "password123"
+ */
+SELECT * FROM Student;
+
+UPDATE Student SET Age = 21 WHERE ID = 101;
+
+/* Revoke SELECT access for john */
+REVOKE SELECT
+ON example.Student
+FROM 'john'@'localhost';
+
+/* use select query from user john */
 SELECT * FROM Student;
