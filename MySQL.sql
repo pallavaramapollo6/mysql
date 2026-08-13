@@ -4,6 +4,111 @@ DROP DATABASE IF EXISTS example;
 CREATE DATABASE example;
 USE example;
 
+/* MySQL Functions and Expressions */
+DROP TABLE IF EXISTS products;
+CREATE TABLE products (
+    id INT PRIMARY KEY,
+    product_name VARCHAR(50),
+    price DECIMAL(10,2),
+    quantity INT,
+    discount DECIMAL(5,2)
+);
+
+INSERT INTO products (id, product_name, price, quantity, discount)
+VALUES
+(1, 'Laptop', 54999.75, 5, 10.50),
+(2, 'Mouse', 799.40, 12, 5.25),
+(3, 'Keyboard', 1499.60, 7, 7.75),
+(4, 'Monitor', 12999.90, 3, 12.50),
+(5, 'Headphones', 2499.25, 8, 15.00);
+
+/* ABS() — Absolute value (Returns the positive value of a number.) */
+SELECT product_name, ABS(price - 3000) AS price_difference
+FROM products;
+
+/* CEIL() — Round up (Returns the smallest integer greater than or equal to the number.) */
+SELECT product_name, price, CEIL(price) AS rounded_price
+FROM products;
+
+/* FLOOR() — Round down (Returns the largest integer less than or equal to the number.) */
+SELECT product_name, price, FLOOR(price) AS rounded_price
+FROM products;
+
+/* ROUND() — Round to specified decimal places */
+SELECT
+    product_name,
+    price,
+    discount,
+    ROUND(price - (price * discount / 100), 2) AS final_price
+FROM products;
+
+/* MOD() — Remainder */
+/* Check whether product quantity is even or odd. */
+SELECT
+    product_name,
+    quantity,
+    CASE
+        WHEN MOD(quantity, 2) = 0 THEN 'Even'
+        ELSE 'Odd'
+    END AS quantity_type
+FROM products;
+
+/* POWER() — Raise a number to a power */
+SELECT
+    product_name,
+    quantity,
+    POWER(quantity, 2) AS quantity_squared
+FROM products;
+
+/* SQRT() — Square root */
+SELECT
+    product_name,
+    quantity,
+    SQRT(quantity) AS quantity_square_root
+FROM products;
+
+/* RAND() — Random number */
+/* Generate a random number for every product */
+SELECT
+    product_name,
+    FLOOR(1 + RAND() * 100) AS random_number
+FROM products;
+
+/* NULL Functions */
+
+/* MySQL Expressions Examples */
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee (
+    EmpID INT PRIMARY KEY,
+    EmpName VARCHAR(50),
+    Salary DECIMAL(10,2)
+);
+
+INSERT INTO Employee (EmpID, EmpName, Salary)
+VALUES
+(101, 'Alice',   45000),
+(102, 'Bob',     55000),
+(103, 'Charlie', 70000),
+(104, 'David',   48000),
+(105, 'Emma',    62000);
+
+/* Display existing and new salary */
+SELECT
+    EmpName,
+    Salary,
+    Salary * 1.10 AS NewSalary
+FROM Employee;
+
+SELECT
+EmpName,
+Salary,
+CASE
+    WHEN Salary>=50000 THEN 'High'
+    ELSE 'Normal'
+END AS Category
+FROM Employee;
+
+
 /* Aggregate Functions and Grouping (DQL) */
 DROP TABLE IF EXISTS Employee;
 CREATE TABLE Employee (
