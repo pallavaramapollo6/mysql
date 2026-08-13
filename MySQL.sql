@@ -303,7 +303,11 @@ VALUES
 ('Kiran', 'kiran@gmail.com', 26, 101, 'Mumbai'),
 ('Meena', 'meena@gmail.com', 29, 103, 'Chennai');
 
+/* FILTERING DATA */
+/* Merge from other system */
+
 /* MySQL Functions and Expressions */
+/* Numeric functions */
 DROP TABLE IF EXISTS products;
 CREATE TABLE products (
     id INT PRIMARY KEY,
@@ -372,6 +376,49 @@ SELECT
     product_name,
     FLOOR(1 + RAND() * 100) AS random_number
 FROM products;
+
+/* String functions */
+/* UPPER  -  to be merged from other system */
+/* LOWER — Convert text to lowercase */
+SELECT EmpName, LOWER(EmpName) AS LowerName
+FROM Employee;
+
+/* LENGTH() — Find the length of employee names */
+SELECT EmpName, LENGTH(EmpName) AS NameLength
+FROM Employee;
+
+/* CONCAT() — Combine strings */
+SELECT EmpName,
+       CONCAT(EmpName, ' lives in ', City) AS EmployeeDetails
+FROM Employee;
+
+/* SUBSTRING() — Extract part of the name */
+SELECT EmpName,
+       SUBSTRING(EmpName, 1, 3) AS FirstThree
+FROM Employee;
+
+/* REPLACE() — Replace text  */
+SELECT Email,
+       REPLACE(Email, '@gmail.com', '@company.com') AS CompanyEmail
+FROM Employee;
+
+/* TRIM() — Remove extra spaces */
+SELECT EmpName,
+       TRIM(EmpName) AS TrimmedName
+FROM Employee;
+
+/* LEFT() — Get characters from the beginning */
+SELECT EmpName,
+       LEFT(EmpName, 2) AS FirstTwo
+FROM Employee;
+
+/* RIGHT() — Get characters from the end */
+SELECT EmpName,
+       RIGHT(EmpName, 2) AS LastTwo
+FROM Employee;
+
+/* Date and Time Functions */
+
 
 /* NULL Functions */
 
