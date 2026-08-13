@@ -1,8 +1,560 @@
-SHOW DATABASES;
+/* Database management */
 /* Delete and create new database example */
 DROP DATABASE IF EXISTS example;
 CREATE DATABASE example;
+
+/* Viewing Databases */
+SHOW DATABASES;
+
+/* Selecting a Database */
 USE example;
+
+/* Deleting a Database */
+DROP DATABASE example;
+
+/* Rename a Database */
+/* Create a new database */
+DROP DATABASE example;
+CREATE DATABASE example_new;
+
+/* Take dump of old database using mysqldump */
+/* mysqldump -u username -p example > backup.sql */
+
+/* Restore it with mysql command with new database */
+/* mysql -u username -p example_new < backup.sql */
+
+DROP DATABASE old_database_name;
+
+/* Table Management */
+/* Create & Display all tables */
+
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee (
+    EmpID INT PRIMARY KEY,
+    EmpName VARCHAR(50) UNIQUE,
+    Department VARCHAR(30),
+    Salary DECIMAL(10, 2),
+    City VARCHAR(30)
+);
+
+SHOW TABLES;
+
+/* View table structure */
+DESCRIBE Employee;
+
+/* View create table statement */
+SHOW CREATE TABLE Employee;
+
+/* DDL (Data Definition Language) */
+/* CREATE */
+DROP TABLE IF EXISTS Student;
+CREATE TABLE Student (ID INT, Name VARCHAR(50));
+
+/* ALTER */
+ALTER TABLE Student ADD Age INT;
+ALTER TABLE Student RENAME COLUMN Age to AgeValue;
+ALTER TABLE Student DROP COLUMN AgeValue;
+
+/* RENAME */
+RENAME TABLE Student TO Students;
+
+/* TRUNCATE */
+TRUNCATE TABLE Students;
+
+/* DROP */
+DROP TABLE Students;
+
+/* Create table with different data types */
+DROP TABLE IF EXISTS Student;
+CREATE TABLE Student (
+    student_id INT,
+    name VARCHAR(50),
+    age TINYINT,
+    marks DECIMAL(5,2),
+    grade CHAR(1),
+    dob DATE,
+    login_time TIME,
+    created_at DATETIME,
+    last_updated TIMESTAMP,
+    active BOOLEAN,
+    gender ENUM('Male','Female'),
+    hobbies SET('Reading','Sports','Music'),
+    details TEXT
+);
+
+/* Add data into the table */
+INSERT INTO Student (
+    student_id, name, age, marks, grade, dob,
+    login_time, created_at, active, gender,
+    hobbies, details
+)
+VALUES (
+    101,
+    'Rahul',
+    20,
+    89.75,
+    'A',
+    '2006-05-15',
+    '09:15:30',
+    '2026-07-24 10:30:00',
+    TRUE,
+    'Male',
+    'Reading,Music',
+    '{"city":"Chennai","course":"BCA"}'
+);
+/* Check the data in the table */
+SELECT * FROM Student;
+
+/* Keys and Constraints */
+/* UNIQUE CONSTRAINT */
+DROP TABLE IF EXISTS Student;
+CREATE TABLE Student (
+	StudentID INT,
+	Email VARCHAR(100) UNIQUE
+);
+/* Success */
+INSERT INTO Student VALUES (101, 'john@gmail.com');
+/* Error (Duplicate) */
+INSERT INTO Student VALUES (102, 'john@gmail.com');
+/* Allowed */
+INSERT INTO Student VALUES (103, NULL);
+
+/* NOT NULL CONSTRAINT */
+DROP TABLE IF EXISTS Student;
+CREATE TABLE Student (
+	StudentID INT,
+	Name VARCHAR(50) NOT NULL
+);
+ 
+/* Success */
+INSERT INTO Student VALUES (101, 'John');
+/* Error */
+INSERT INTO Student VALUES (102, NULL);
+
+/* CHECK CONSTRAINT */
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee (
+	EmpID INT,
+	Age INT CHECK (Age >= 18)
+);
+/* Success */
+INSERT INTO Employee VALUES (101, 25);
+/* Error */
+INSERT INTO Employee VALUES (102, 16);
+
+/* PRIMARY KEY Constraint */
+DROP TABLE IF EXISTS Student;
+CREATE TABLE Student (
+	StudentID INT PRIMARY KEY,
+	Name VARCHAR(50)
+);
+/* Success */
+INSERT INTO Student VALUES (101, 'John');
+/* Error (Duplicate) */
+INSERT INTO Student VALUES (101, 'David');
+/* Error (NULL not allowed) */
+INSERT INTO Student VALUES (NULL, 'Alice');
+
+/* COMPOSITE */
+DROP TABLE IF EXISTS Enrollment;
+CREATE TABLE Enrollment (
+    StudentID INT,
+    CourseID INT,
+    EnrollmentDate DATE,
+    PRIMARY KEY (StudentID, CourseID)
+);
+
+INSERT INTO Enrollment (StudentID, CourseID, EnrollmentDate)
+VALUES
+(101, 201, '2025-01-10'),
+(101, 202, '2025-01-12'),
+(102, 201, '2025-01-15'),
+(102, 203, '2025-01-18'),
+(103, 202, '2025-01-20'),
+(104, 201, '2025-01-22'),
+(104, 204, '2025-01-25'),
+(105, 203, '2025-01-28');
+
+/* ERROR 1062 (23000): Duplicate entry '101-201' for key 'enrollment.PRIMARY' */
+INSERT INTO Enrollment (StudentID, CourseID, EnrollmentDate)
+VALUES (101, 201, '2025-02-01');
+
+/* FOREIGN KEY Constraint */
+DROP TABLE IF EXISTS Department;
+CREATE TABLE Department (
+	DeptID INT PRIMARY KEY,
+	DeptName VARCHAR(50)
+);
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee (
+	EmpID INT PRIMARY KEY,
+	EmpName VARCHAR(50),
+	DeptID INT,
+	FOREIGN KEY (DeptID) REFERENCES Department(DeptID)
+);
+ 
+INSERT INTO Department VALUES (10, 'HR');
+INSERT INTO Department VALUES (20, 'Finance');
+
+/* Success */
+INSERT INTO Employee VALUES (101, 'John', 10);
+/* Error */
+INSERT INTO Employee VALUES (102, 'David', 30);
+
+/* DEFAULT Constraint */
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee (
+    emp_id INT PRIMARY KEY,
+    city VARCHAR(30) DEFAULT 'Chennai'
+);
+
+INSERT INTO Employee (emp_id)
+VALUES (1), (3);
+
+INSERT INTO Employee (emp_id, city)
+VALUES (2, 'Delhi');
+
+INSERT INTO Employee (emp_id, city)
+VALUES
+(10, DEFAULT),
+(20, 'Delhi'),
+(30, DEFAULT);
+
+/* AUTO_INCREMENT Constraint */
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee (
+    emp_id INT AUTO_INCREMENT PRIMARY KEY,
+    emp_name VARCHAR(50)
+);
+
+INSERT INTO Employee (emp_name) VALUE ("Name1");
+INSERT INTO Employee (emp_name) VALUE ("Name2");
+
+/* Example of using all constraints */
+DROP TABLE IF EXISTS Department;
+CREATE TABLE Department (
+	DeptID INT PRIMARY KEY,
+	DeptName VARCHAR(50)
+);
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee (
+	EmpID INT AUTO_INCREMENT PRIMARY KEY,
+	EmpName VARCHAR(50) NOT NULL,
+	Email VARCHAR(100) UNIQUE,
+	Age INT CHECK (Age >= 18),
+	DeptID INT,
+	city VARCHAR(30) DEFAULT 'Chennai',
+	FOREIGN KEY (DeptID) REFERENCES Department(DeptID)
+);
+
+INSERT INTO Department
+VALUES
+(101, 'HR'),
+(102, 'IT');
+
+INSERT INTO Employee (EmpName, Email, Age, DeptID)
+VALUES
+('Rahul', 'rahul@gmail.com', 22, 101),
+('Priya', 'priya@gmail.com', 25, 102);
+
+/* DML (Data Manipulation Language) */
+DROP TABLE IF EXISTS Student;
+CREATE TABLE Student (
+	ID INT PRIMARY KEY,
+	Name VARCHAR(50),
+    Age INT
+);
+/* Insert */
+INSERT INTO Student (ID, Name, Age) VALUES (1, 'John', 20);
+
+/* Update */
+UPDATE Student SET Age = 21 WHERE ID = 1;
+
+/* Delete */
+DELETE FROM Student WHERE ID = 1;
+
+/* DQL (Data Query Language) */
+DROP TABLE IF EXISTS Department;
+CREATE TABLE Department (
+	DeptID INT PRIMARY KEY,
+	DeptName VARCHAR(50)
+);
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee (
+	EmpID INT AUTO_INCREMENT PRIMARY KEY,
+	EmpName VARCHAR(50) NOT NULL,
+	Email VARCHAR(100) UNIQUE,
+	Age INT CHECK (Age >= 18),
+	DeptID INT,
+	city VARCHAR(30) DEFAULT 'Chennai',
+	FOREIGN KEY (DeptID) REFERENCES Department(DeptID)
+);
+
+INSERT INTO Employee (EmpName, Email, Age, DeptID, City)
+VALUES
+('Rahul', 'rahul@gmail.com', 22, 101, 'Chennai'),
+('Priya', 'priya@gmail.com', 25, 102, 'Delhi'),
+('Amit', 'amit@gmail.com', 28, 101, 'Mumbai'),
+('Anitha', 'anitha@gmail.com', 24, 103, 'Chennai'),
+('Raj', 'raj@gmail.com', 30, 102, 'Delhi'),
+('Ravi', 'ravi@gmail.com', 27, 101, 'Mumbai'),
+('Sneha', 'sneha@gmail.com', 21, 103, 'Chennai'),
+('Vijay', 'vijay@gmail.com', 35, 102, 'Delhi'),
+('Kiran', 'kiran@gmail.com', 26, 101, 'Mumbai'),
+('Meena', 'meena@gmail.com', 29, 103, 'Chennai');
+
+/* MySQL Functions and Expressions */
+DROP TABLE IF EXISTS products;
+CREATE TABLE products (
+    id INT PRIMARY KEY,
+    product_name VARCHAR(50),
+    price DECIMAL(10,2),
+    quantity INT,
+    discount DECIMAL(5,2)
+);
+
+INSERT INTO products (id, product_name, price, quantity, discount)
+VALUES
+(1, 'Laptop', 54999.75, 5, 10.50),
+(2, 'Mouse', 799.40, 12, 5.25),
+(3, 'Keyboard', 1499.60, 7, 7.75),
+(4, 'Monitor', 12999.90, 3, 12.50),
+(5, 'Headphones', 2499.25, 8, 15.00);
+
+/* ABS() — Absolute value (Returns the positive value of a number.) */
+SELECT product_name, ABS(price - 3000) AS price_difference
+FROM products;
+
+/* CEIL() — Round up (Returns the smallest integer greater than or equal to the number.) */
+SELECT product_name, price, CEIL(price) AS rounded_price
+FROM products;
+
+/* FLOOR() — Round down (Returns the largest integer less than or equal to the number.) */
+SELECT product_name, price, FLOOR(price) AS rounded_price
+FROM products;
+
+/* ROUND() — Round to specified decimal places */
+SELECT
+    product_name,
+    price,
+    discount,
+    ROUND(price - (price * discount / 100), 2) AS final_price
+FROM products;
+
+/* MOD() — Remainder */
+/* Check whether product quantity is even or odd. */
+SELECT
+    product_name,
+    quantity,
+    CASE
+        WHEN MOD(quantity, 2) = 0 THEN 'Even'
+        ELSE 'Odd'
+    END AS quantity_type
+FROM products;
+
+/* POWER() — Raise a number to a power */
+SELECT
+    product_name,
+    quantity,
+    POWER(quantity, 2) AS quantity_squared
+FROM products;
+
+/* SQRT() — Square root */
+SELECT
+    product_name,
+    quantity,
+    SQRT(quantity) AS quantity_square_root
+FROM products;
+
+/* RAND() — Random number */
+/* Generate a random number for every product */
+SELECT
+    product_name,
+    FLOOR(1 + RAND() * 100) AS random_number
+FROM products;
+
+/* NULL Functions */
+
+/* MySQL Expressions Examples */
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee (
+    EmpID INT PRIMARY KEY,
+    EmpName VARCHAR(50),
+    Salary DECIMAL(10,2)
+);
+
+INSERT INTO Employee (EmpID, EmpName, Salary)
+VALUES
+(101, 'Alice',   45000),
+(102, 'Bob',     55000),
+(103, 'Charlie', 70000),
+(104, 'David',   48000),
+(105, 'Emma',    62000);
+
+/* Display existing and new salary */
+SELECT
+    EmpName,
+    Salary,
+    Salary * 1.10 AS NewSalary
+FROM Employee;
+
+SELECT
+EmpName,
+Salary,
+CASE
+    WHEN Salary>=50000 THEN 'High'
+    ELSE 'Normal'
+END AS Category
+FROM Employee;
+
+
+/* Aggregate Functions and Grouping (DQL) */
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee (
+    EmpID INT PRIMARY KEY,
+    EmpName VARCHAR(50),
+    Department VARCHAR(30),
+    Designation VARCHAR(30),
+    Salary DECIMAL(10,2),
+    HireDate DATE
+);
+
+INSERT INTO Employee (EmpID, EmpName, Department, Designation, Salary, HireDate)
+VALUES
+(101, 'John',    'IT',      'Developer', 55000.00, '2022-01-15'),
+(102, 'Mary',    'HR',      'HR Manager', 60000.00, '2021-03-20'),
+(103, 'David',   'Finance', 'Accountant', 48000.00, '2020-07-10'),
+(104, 'Sarah',   'IT',      'Team Lead', 75000.00, '2019-11-05'),
+(105, 'James',   'Sales',   'Sales Executive', 42000.00, '2023-02-18'),
+(106, 'Priya',   'IT',      'Developer', 58000.00, '2022-09-01'),
+(107, 'Rahul',   'Finance', 'Financial Analyst', 52000.00, '2021-12-12'),
+(108, 'Anita',   'HR',      'Recruiter', 45000.00, '2023-06-25'),
+(109, 'Karthik', 'Sales',   'Sales Manager', 68000.00, '2020-04-08'),
+(110, 'Neha',    'Marketing', 'Marketing Executive', 50000.00, '2024-01-10');
+
+SELECT
+COUNT(*) AS Employees,
+SUM(Salary) AS TotalSalary,
+AVG(Salary) AS AverageSalary,
+MIN(Salary) AS LowestSalary,
+MAX(Salary) AS HighestSalary
+FROM Employee;
+
+SELECT
+Department,
+COUNT(*) AS Employees,
+SUM(Salary) AS TotalSalary,
+AVG(Salary) AS AverageSalary,
+MIN(Salary) AS LowestSalary,
+MAX(Salary) AS HighestSalary
+FROM Employee
+GROUP BY Department;
+
+/* GROUP BY Clause */
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(50),
+    department VARCHAR(30),
+    salary DECIMAL(10,2)
+);
+
+INSERT INTO employees (emp_id, emp_name, department, salary) VALUES
+(101, 'John',   'HR',       40000.00),
+(102, 'Priya',  'IT',       60000.00),
+(103, 'Rahul',  'HR',       45000.00),
+(104, 'Anita',  'IT',       70000.00),
+(105, 'Kiran',  'Sales',    50000.00),
+(106, 'David',  'Finance',  55000.00),
+(107, 'Meena',  'Sales',    48000.00),
+(108, 'Arun',   'IT',       65000.00),
+(109, 'Suresh', 'Finance',  52000.00),
+(110, 'Divya',  'HR',       42000.00);
+
+/* Count employees in each department */
+SELECT department, COUNT(*) AS employee_count
+FROM employees
+GROUP BY department;
+
+/* Total salary by department */
+SELECT department, SUM(salary) AS total_salary
+FROM employees
+GROUP BY department;
+
+/* Average salary by department */
+SELECT department, AVG(salary) AS avg_salary
+FROM employees
+GROUP BY department;
+
+/* Using HAVING with GROUP BY */
+SELECT department, COUNT(*) AS employee_count
+FROM employees
+GROUP BY department
+HAVING COUNT(*) > 1;
+
+
+/* JOINS */
+DROP TABLE IF EXISTS Student;
+CREATE TABLE Student(
+StudentID INT PRIMARY KEY,
+StudentName VARCHAR(50)
+);
+
+INSERT INTO Student(StudentID, StudentName)
+VALUES (1,  'Alice'),
+(2, 'Bob'),
+(3,  'Charlie'),
+(4,  'David');
+
+SELECT * FROM student;
+
+CREATE TABLE Enrollment (
+    StudentID INT,
+    Course VARCHAR(50)
+);
+
+INSERT INTO Enrollment (StudentID, Course)
+VALUES (1,  'Math'),
+(2, 'Science'),
+(5,  'English');
+
+SELECT * FROM Enrollment;
+
+/* INNER JOIN */
+SELECT Student.StudentID, Student.StudentName, Enrollment.Course
+FROM Student
+INNER JOIN Enrollment
+ON Student.StudentID = Enrollment.StudentID;
+
+/* LEFT JOIN */
+SELECT Student.StudentID, Student.StudentName, Enrollment.Course
+FROM Student
+LEFT JOIN Enrollment
+ON Student.StudentID = Enrollment.StudentID;
+
+/* RIGHT JOIN */
+SELECT Student.StudentID, Student.StudentName, Enrollment.Course
+FROM Student
+RIGHT JOIN Enrollment
+ON Student.StudentID = Enrollment.StudentID;
+
+/* FULL OUTER JOIN */
+SELECT Student.StudentID, Student.StudentName, Enrollment.Course
+FROM Student
+LEFT JOIN Enrollment
+ON Student.StudentID = Enrollment.StudentID
+
+UNION
+
+SELECT Student.StudentID, Student.StudentName, Enrollment.Course
+FROM Student
+RIGHT JOIN Enrollment
+ON Student.StudentID = Enrollment.StudentID;
+
+/* CROSS JOIN */
+SELECT Student.StudentName, Enrollment.Course
+FROM Student
+CROSS JOIN Enrollment;
 
 /* SUBQUERIES */
 /* Delete and create new tables required */
