@@ -304,7 +304,88 @@ VALUES
 ('Meena', 'meena@gmail.com', 29, 103, 'Chennai');
 
 /* FILTERING DATA */
-/* Merge from other system */
+/* Comparison operator */
+SELECT *
+FROM Employee
+WHERE Age > 25;
+
+SELECT *
+FROM Employee
+WHERE City = 'Delhi';
+
+/* Logical Operator */
+SELECT *
+FROM Employee
+WHERE Age > 20 AND City = 'Chennai';
+
+SELECT *
+FROM Employee
+WHERE City = 'Delhi' OR City = 'Mumbai';
+
+SELECT *
+FROM Employee
+WHERE NOT City = 'Chennai';
+
+/* Between Operator */
+SELECT *
+FROM Employee
+WHERE Age BETWEEN 20 AND 30;
+
+/* IN Operator */
+SELECT *
+FROM Employee
+WHERE City IN ('Chennai', 'Delhi', 'Mumbai');
+
+/* LIKE Operator */
+/* Names starting with 'R' */
+SELECT *
+FROM Employee
+WHERE EmpName LIKE 'R%';
+
+/* Names ending with 'a' */
+SELECT *
+FROM Employee
+WHERE EmpName LIKE '%a';
+
+/* Names containing 'it' */
+SELECT *
+FROM Employee
+WHERE EmpName LIKE '%it%';
+
+/* SORTING DATA */
+/* Ascending order */
+SELECT *
+FROM Employee
+ORDER BY Age;
+
+/* Descending order */
+SELECT *
+FROM Employee
+ORDER BY Age DESC;
+
+/* Sorting by Multiple Columns */
+SELECT *
+FROM Employee
+ORDER BY City ASC, Age DESC;
+
+/* LIMIT CLAUSE */
+/* Display first 3 employees */
+SELECT *
+FROM Employee
+LIMIT 3;
+
+/* Display top 5 Senior employees */
+SELECT *
+FROM Employee
+ORDER BY Age DESC
+LIMIT 5;
+
+/* COMPLETE EXAMPLE */
+SELECT EmpName, Age, City
+FROM Employee
+WHERE Age >= 25
+AND City IN ('Delhi', 'Mumbai')
+ORDER BY Age DESC;
 
 /* MySQL Functions and Expressions */
 /* Numeric functions */
@@ -325,6 +406,7 @@ VALUES
 (4, 'Monitor', 12999.90, 3, 12.50),
 (5, 'Headphones', 2499.25, 8, 15.00);
 
+/* Numeric functions */
 /* ABS() — Absolute value (Returns the positive value of a number.) */
 SELECT product_name, ABS(price - 3000) AS price_difference
 FROM products;
@@ -378,7 +460,29 @@ SELECT
 FROM products;
 
 /* String functions */
-/* UPPER  -  to be merged from other system */
+DROP TABLE IF EXISTS employees;
+CREATE TABLE employees (
+    id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    department VARCHAR(50),
+    phone VARCHAR(20)
+);
+
+INSERT INTO employees
+(id, first_name, last_name, email, department, phone)
+VALUES
+(1, 'John', 'Smith', 'john.smith@gmail.com', 'Sales', '9876543210'),
+(2, 'Priya', 'Sharma', 'priya.sharma@gmail.com', 'Finance', '9876512345'),
+(3, 'David', 'Brown', 'david.brown@gmail.com', 'IT', '9876598765'),
+(4, 'Anita', 'Kumar', 'anita.kumar@gmail.com', 'HR', '9876523456'),
+(5, 'Rahul', 'Verma', 'rahul.verma@gmail.com', 'Marketing', '9876587654');
+
+/* UPPER — Convert text to uppercase */
+SELECT first_name, UPPER(first_name) AS uppercase_name
+FROM employees;
+
 /* LOWER — Convert text to lowercase */
 SELECT EmpName, LOWER(EmpName) AS LowerName
 FROM Employee;
@@ -418,9 +522,161 @@ SELECT EmpName,
 FROM Employee;
 
 /* Date and Time Functions */
+DROP TABLE IF EXISTS Employee;
+DROP TABLE IF EXISTS Department;
+CREATE TABLE Department (
+    DeptID INT PRIMARY KEY,
+    DeptName VARCHAR(50) NOT NULL
+);
+CREATE TABLE Employee (
+    EmpID INT AUTO_INCREMENT PRIMARY KEY,
+    EmpName VARCHAR(50) NOT NULL,
+    Email VARCHAR(100) UNIQUE,
+    Age INT CHECK (Age >= 18),
+    DeptID INT,
+    City VARCHAR(30) DEFAULT 'Chennai',
+    JoinDate DATE,
 
+    FOREIGN KEY (DeptID)
+        REFERENCES Department(DeptID)
+);
+INSERT INTO Department (DeptID, DeptName)
+VALUES
+(101, 'Sales'),
+(102, 'Finance'),
+(103, 'HR');
+INSERT INTO Employee
+(EmpName, Email, Age, DeptID, City, JoinDate)
+VALUES
+('Rahul',  'rahul@gmail.com',  22, 101, 'Chennai', '2022-01-15'),
+('Priya',  'priya@gmail.com',  25, 102, 'Delhi',   '2021-06-20'),
+('Amit',   'amit@gmail.com',   28, 101, 'Mumbai',  '2023-03-10'),
+('Anitha', 'anitha@gmail.com', 24, 103, 'Chennai', '2020-11-05'),
+('Raj',    'raj@gmail.com',    30, 102, 'Delhi',   '2019-08-25'),
+('Ravi',   'ravi@gmail.com',   27, 101, 'Mumbai',  '2022-12-01'),
+('Sneha',  'sneha@gmail.com',  21, 103, 'Chennai', '2024-02-14'),
+('Vijay',  'vijay@gmail.com',  35, 102, 'Delhi',   '2018-07-30'),
+('Kiran',  'kiran@gmail.com',  26, 101, 'Mumbai',  '2021-10-12'),
+('Meena',  'meena@gmail.com',  29, 103, 'Chennai', '2023-09-18');
+
+/* NOW returns the current date and time. */
+SELECT EmpName, JoinDate, NOW() AS CurrentDateTime
+FROM Employee;
+
+/* CURDATE() - returns the current date only. */
+SELECT EmpName, JoinDate, CURDATE() AS Today
+FROM Employee;
+
+/* CURTIME() returns the current time only. */
+SELECT EmpName, CURTIME() AS CurrentTime
+FROM Employee;
+
+/* YEAR() - Returns the year from a date.  */
+SELECT EmpName, JoinDate, YEAR(JoinDate) AS JoiningYear
+FROM Employee;
+
+/* MONTH() - Returns the month number from a date. */
+SELECT EmpName, JoinDate, MONTH(JoinDate) AS JoiningMonth
+FROM Employee;
+
+/* DAY() - Returns the day of the month from a date. */
+SELECT EmpName, JoinDate, DAY(JoinDate) AS JoiningDay
+FROM Employee;
+
+/* DATEDIFF() - Returns the number of days between two dates. */
+SELECT
+    EmpName,
+    JoinDate,
+    CURDATE() AS Today,
+    DATEDIFF(CURDATE(), JoinDate) AS DaysWorked
+FROM Employee;
+
+/* Combining the functions */
+SELECT
+    EmpName,
+    JoinDate,
+    YEAR(JoinDate) AS JoiningYear,
+    MONTH(JoinDate) AS JoiningMonth,
+    DAY(JoinDate) AS JoiningDay,
+    DATEDIFF(CURDATE(), JoinDate) AS DaysSinceJoining
+FROM Employee;
+
+/* Control Flow functions */
+DROP TABLE IF EXISTS EmployeeDetails;
+CREATE TABLE EmployeeDetails (
+    EmpID INT PRIMARY KEY,
+    EmpName VARCHAR(50),
+    Salary DECIMAL(10,2),
+    Bonus DECIMAL(10,2),
+    City VARCHAR(30),
+    Email VARCHAR(100),
+    Phone VARCHAR(15),
+    Performance INT
+);
+
+INSERT INTO EmployeeDetails
+(EmpID, EmpName, Salary, Bonus, City, Email, Phone, Performance)
+VALUES
+(1, 'Rahul', 30000, 5000, 'Chennai', 'rahul@gmail.com', '9876543210', 85),
+(2, 'Priya', 45000, NULL, 'Delhi', 'priya@gmail.com', NULL, 92),
+(3, 'Amit', 25000, 3000, NULL, 'amit@gmail.com', '9876543211', 65),
+(4, 'Anitha', 50000, NULL, 'Chennai', NULL, '9876543212', 45),
+(5, 'Raj', 35000, 4000, NULL, NULL, NULL, 75);
+
+/* IF Function */
+SELECT
+    EmpName,
+    Salary,
+    IF(Salary >= 40000, 'High Salary', 'Normal Salary') AS SalaryStatus
+FROM EmployeeDetails;
+
+/* CASE Function */
+SELECT
+    EmpName,
+    Performance,
+    CASE
+        WHEN Performance >= 90 THEN 'Excellent'
+        WHEN Performance >= 75 THEN 'Very Good'
+        WHEN Performance >= 60 THEN 'Good'
+        ELSE 'Needs Improvement'
+    END AS Rating
+FROM EmployeeDetails;
 
 /* NULL Functions */
+/* IFNULL Function */
+SELECT
+    EmpName,
+    Salary,
+    Bonus,
+    IFNULL(Bonus, 0) AS BonusAmount
+FROM EmployeeDetails;
+
+/* COALESCE */
+SELECT
+    EmpName,
+    COALESCE(Email, Phone, 'No Contact') AS Contact
+FROM EmployeeDetails;
+
+/* NULLIF Function */
+SELECT
+    EmpName,
+    NULLIF(Phone, '') AS PhoneNumber
+FROM EmployeeDetails;
+
+/* Practical Example for NULLIF */
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee (
+    EmpID INT PRIMARY KEY,
+    EmpName VARCHAR(50),
+    Salary DECIMAL(10,2),
+    Performance INT
+);
+
+INSERT INTO Employee VALUES
+(1, 'Rahul', 30000, 85),
+(2, 'Priya', 45000, 90),
+(3, 'Amit', 25000, 0),
+(4, 'Anitha', 50000, 75);
 
 /* MySQL Expressions Examples */
 DROP TABLE IF EXISTS Employee;
