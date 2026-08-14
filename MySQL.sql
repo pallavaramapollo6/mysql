@@ -27,7 +27,6 @@ DROP DATABASE old_database_name;
 
 /* Table Management */
 /* Create & Display all tables */
-
 DROP TABLE IF EXISTS Employee;
 CREATE TABLE Employee (
     EmpID INT PRIMARY KEY,
@@ -709,7 +708,6 @@ CASE
     ELSE 'Normal'
 END AS Category
 FROM Employee;
-
 
 /* Aggregate Functions and Grouping (DQL) */
 DROP TABLE IF EXISTS Employee;
