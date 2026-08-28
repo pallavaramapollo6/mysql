@@ -483,42 +483,42 @@ SELECT first_name, UPPER(first_name) AS uppercase_name
 FROM employees;
 
 /* LOWER — Convert text to lowercase */
-SELECT EmpName, LOWER(EmpName) AS LowerName
-FROM Employee;
+SELECT first_name, LOWER(first_name) AS LowerName
+FROM employees;
 
 /* LENGTH() — Find the length of employee names */
-SELECT EmpName, LENGTH(EmpName) AS NameLength
-FROM Employee;
+SELECT first_name, LENGTH(first_name) AS NameLength
+FROM employees;
 
 /* CONCAT() — Combine strings */
-SELECT EmpName,
-       CONCAT(EmpName, ' lives in ', City) AS EmployeeDetails
-FROM Employee;
+SELECT first_name,
+       CONCAT(first_name, ' studies in ', department) AS EmployeeDetails
+FROM employees;
 
 /* SUBSTRING() — Extract part of the name */
-SELECT EmpName,
-       SUBSTRING(EmpName, 1, 3) AS FirstThree
-FROM Employee;
+SELECT first_name,
+       SUBSTRING(first_name, 1, 3) AS FirstThree
+FROM employees;
 
 /* REPLACE() — Replace text  */
 SELECT Email,
        REPLACE(Email, '@gmail.com', '@company.com') AS CompanyEmail
-FROM Employee;
+FROM employees;
 
 /* TRIM() — Remove extra spaces */
-SELECT EmpName,
-       TRIM(EmpName) AS TrimmedName
-FROM Employee;
+SELECT first_name,
+       TRIM(first_name) AS TrimmedName
+FROM employees;
 
 /* LEFT() — Get characters from the beginning */
-SELECT EmpName,
-       LEFT(EmpName, 2) AS FirstTwo
-FROM Employee;
+SELECT first_name,
+       LEFT(first_name, 2) AS FirstTwo
+FROM employees;
 
 /* RIGHT() — Get characters from the end */
-SELECT EmpName,
-       RIGHT(EmpName, 2) AS LastTwo
-FROM Employee;
+SELECT first_name,
+       RIGHT(first_name, 2) AS LastTwo
+FROM employees;
 
 /* Date and Time Functions */
 DROP TABLE IF EXISTS Employee;
