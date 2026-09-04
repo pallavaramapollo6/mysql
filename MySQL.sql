@@ -273,12 +273,12 @@ UPDATE Student SET Age = 21 WHERE ID = 1;
 DELETE FROM Student WHERE ID = 1;
 
 /* DQL (Data Query Language) */
+DROP TABLE IF EXISTS Employee;
 DROP TABLE IF EXISTS Department;
 CREATE TABLE Department (
 	DeptID INT PRIMARY KEY,
 	DeptName VARCHAR(50)
 );
-DROP TABLE IF EXISTS Employee;
 CREATE TABLE Employee (
 	EmpID INT AUTO_INCREMENT PRIMARY KEY,
 	EmpName VARCHAR(50) NOT NULL,
@@ -288,7 +288,7 @@ CREATE TABLE Employee (
 	city VARCHAR(30) DEFAULT 'Chennai',
 	FOREIGN KEY (DeptID) REFERENCES Department(DeptID)
 );
-
+INSERT INTO Department (DeptID, DeptName) VALUES (101, "HR"), (102, "Sales"), (103, "IT");
 INSERT INTO Employee (EmpName, Email, Age, DeptID, City)
 VALUES
 ('Rahul', 'rahul@gmail.com', 22, 101, 'Chennai'),
@@ -492,7 +492,7 @@ FROM employees;
 
 /* CONCAT() — Combine strings */
 SELECT first_name,
-       CONCAT(first_name, ' studies in ', department) AS EmployeeDetails
+       CONCAT(first_name, ' works in ', department) AS EmployeeDetails
 FROM employees;
 
 /* SUBSTRING() — Extract part of the name */
@@ -677,6 +677,21 @@ INSERT INTO Employee VALUES
 (3, 'Amit', 25000, 0),
 (4, 'Anitha', 50000, 75);
 
+SELECT
+    EmpName,
+    Salary,
+    Performance,
+    Salary / NULLIF(Performance, 0) AS SalaryPerPoint
+FROM Employee;
+
+SELECT
+    EmpName,
+    Salary,
+    Performance,
+    Salary / Performance AS SalaryPerPoint
+FROM Employee;
+
+SHOW WARNINGS;
 /* MySQL Expressions Examples */
 DROP TABLE IF EXISTS Employee;
 CREATE TABLE Employee (
