@@ -692,6 +692,10 @@ SELECT
 FROM Employee;
 
 SHOW WARNINGS;
+/* Error occurs when divide by zero happens in update query */
+UPDATE Employee SET Salary = Salary / Performance WHERE EmpID=3;
+UPDATE Employee SET Salary = Salary / NULLIF(Performance, 0) WHERE EmpID=3;
+
 /* MySQL Expressions Examples */
 DROP TABLE IF EXISTS Employee;
 CREATE TABLE Employee (
@@ -724,7 +728,7 @@ CASE
 END AS Category
 FROM Employee;
 
-/* Aggregate Functions and Grouping (DQL) */
+/* Aggregate Functions and Grouping (DQL) */USE Example;
 DROP TABLE IF EXISTS Employee;
 CREATE TABLE Employee (
     EmpID INT PRIMARY KEY,
@@ -806,10 +810,33 @@ GROUP BY department;
 SELECT department, COUNT(*) AS employee_count
 FROM employees
 GROUP BY department
-HAVING COUNT(*) > 1;
+HAVING COUNT(*) > 2;
+
+SELECT department, AVG(salary)
+FROM employees
+WHERE salary > 40000
+GROUP BY department
+HAVING AVG(salary) > 50000;
+
+ALTER TABLE employees
+ADD designation VARCHAR(30);
+
+UPDATE employees SET designation = 'Manager' WHERE emp_id IN (101,104,106);
+
+UPDATE employees SET designation = 'Executive' WHERE emp_id IN (102,103,105,107,109,110);
+
+UPDATE employees SET designation = 'Analyst' WHERE emp_id = 108;
+
+SELECT department,
+       designation,
+       COUNT(*) AS employee_count,
+       AVG(salary) AS average_salary
+FROM employees
+GROUP BY department, designation;
 
 
 /* JOINS */
+CREATE Database Example;USE Example;
 DROP TABLE IF EXISTS Student;
 CREATE TABLE Student(
 StudentID INT PRIMARY KEY,
@@ -823,7 +850,7 @@ VALUES (1,  'Alice'),
 (4,  'David');
 
 SELECT * FROM student;
-
+DROP TABLE IF EXISTS Enrollment;
 CREATE TABLE Enrollment (
     StudentID INT,
     Course VARCHAR(50)
@@ -868,9 +895,39 @@ RIGHT JOIN Enrollment
 ON Student.StudentID = Enrollment.StudentID;
 
 /* CROSS JOIN */
-SELECT Student.StudentName, Enrollment.Course
-FROM Student
-CROSS JOIN Enrollment;
+CREATE TABLE Cars (
+    CarID INT PRIMARY KEY,
+    ModelName VARCHAR(50),
+    BasePrice DECIMAL(10,2)
+);
+
+INSERT INTO Cars (CarID, ModelName, BasePrice)
+VALUES
+(1, 'Toyota Camry', 30000.00),
+(2, 'Honda Civic', 25000.00),
+(3, 'Tesla Model 3', 40000.00);
+
+CREATE TABLE Colors (
+    ColorID INT PRIMARY KEY,
+    ColorName VARCHAR(30),
+    ExtraPrice DECIMAL(10,2)
+);
+
+INSERT INTO Colors (ColorID, ColorName, ExtraPrice)
+VALUES
+(101, 'Black', 0.00),
+(102, 'White', 500.00),
+(103, 'Red', 1000.00),
+(104, 'Blue', 750.00);
+
+SELECT
+    Cars.ModelName,
+    Cars.BasePrice,
+    Colors.ColorName,
+    Colors.ExtraPrice,
+    Cars.BasePrice + Colors.ExtraPrice AS FinalPrice
+FROM Cars
+CROSS JOIN Colors;
 
 /* SUBQUERIES */
 /* Delete and create new tables required */
@@ -936,7 +993,7 @@ FROM (
     WHERE Marks > 60
 ) AS Result;
 
-/* SET Operations */
+/* SET Operations */USE Example;
 DROP TABLE IF EXISTS Students2024;
 DROP TABLE IF EXISTS Students2025;
 CREATE TABLE Students2024 (
@@ -1106,7 +1163,7 @@ SELECT
     AVG(Salary) OVER(PARTITION BY Department) AS AvgDeptSalary
 FROM Employees;
 
-/* Views */
+/* Views */USE Example;
 DROP TABLE IF EXISTS Employees;
 CREATE TABLE Employees
 (
@@ -1347,18 +1404,18 @@ DELIMITER ;
 CALL GetEmployees();
 
 /* Procedure with Parameters */
+DROP PROCEDURE GetEmployeeByDept;
 DELIMITER //
-
-CREATE PROCEDURE GetEmployeeByDept(IN dept VARCHAR(50))
+CREATE PROCEDURE GetEmployeeByDept(IN identity INT)
 BEGIN
     SELECT *
     FROM employees
-    WHERE department = dept;
+    WHERE id = identity;
 END //
 
 DELIMITER ;
 /* Execute */
-CALL GetEmployeeByDept('HR');
+CALL GetEmployeeByDept(103);
 
 /* FUNCTIONS */
 DELIMITER //
@@ -1394,8 +1451,8 @@ END //
 
 DELIMITER ;
 
-/* If someone inserts, */
-INSERT INTO employees(EmpId, name, salary)
+/* If someone inserts, */ SELECT * FROM employees;
+INSERT INTO employees(id, name, salary)
 VALUES (111, 'John', -5000);
 
 /* Example 2: AFTER INSERT Trigger */
@@ -1414,13 +1471,13 @@ ON employees
 FOR EACH ROW
 BEGIN
     INSERT INTO employee_log
-    VALUES (NEW.EmpId, NOW());
+    VALUES (NEW.id, NOW());
 END //
 
 DELIMITER ;
 
 /* If someone inserts, */
-INSERT INTO employees(EmpId, name, salary)
+INSERT INTO employees(id, name, salary)
 VALUES (112, 'John', -5000);
 
 /* Check the audit log */
@@ -1442,16 +1499,16 @@ AFTER UPDATE
 ON employees
 FOR EACH ROW
 BEGIN
-    INSERT INTO salary_history(emp_id, old_salary, new_salary)
-    VALUES (OLD.EmpId, OLD.salary, NEW.salary);
+    INSERT INTO salary_history(id, old_salary, new_salary)
+    VALUES (OLD.id, OLD.salary, NEW.salary);
 END //
 
 DELIMITER ;
 
-/* Update the table */
-UPDATE employees
+/* Update the table */ SELECT * FROM Employees;
+UPDATE Employees
 SET salary = 10000
-WHERE EmpId = 111;
+WHERE id = 111;
 
 /* Check the salary_history audit table */
 SELECT * FROM salary_history;
