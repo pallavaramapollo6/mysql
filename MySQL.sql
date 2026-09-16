@@ -1494,7 +1494,7 @@ AFTER UPDATE
 ON employees
 FOR EACH ROW
 BEGIN
-    INSERT INTO salary_history(id, old_salary, new_salary)
+    INSERT INTO salary_history(emp_id, old_salary, new_salary)
     VALUES (OLD.id, OLD.salary, NEW.salary);
 END //
 
