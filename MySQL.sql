@@ -1060,23 +1060,15 @@ INSERT INTO Employees (EmpID, Name, Department, Salary) VALUES
 (110, 'Noah',   'IT',      62000);
 
 /* To check the average salary */
-/* IF MySQL version is 8.0+
+/* IF MySQL version is 8.0+ */
 SELECT VERSION();
 WITH AvgSalary AS (
     SELECT AVG(Salary) AS Avg_Sal
     FROM Employees
 ) SELECT * FROM AvgSalary;
-*/
-/* IF MySQL version is 5.7 or older */
-SELECT *
-FROM (
-    SELECT AVG(Salary) AS Avg_Sal
-    FROM Employees
-) AS AvgSalary;
 
 /* Find employees earning more than the average salary  */
-/* IF MySQL version is 8.0+
-SELECT VERSION();
+/* IF MySQL version is 8.0+ */
 WITH AvgSalary AS
 (
     SELECT AVG(Salary) AS AvgSalary
@@ -1089,19 +1081,6 @@ SELECT
     e.Salary
 FROM Employees e
 CROSS JOIN AvgSalary a
-WHERE e.Salary > a.AvgSalary;
-*/
-/* IF MySQL version is 5.7 or older */
-SELECT
-    e.EmpID,
-    e.Name,
-    e.Department,
-    e.Salary
-FROM Employees e
-CROSS JOIN (
-    SELECT AVG(Salary) AS AvgSalary
-    FROM Employees
-) a
 WHERE e.Salary > a.AvgSalary;
 
 /* Window Functions */
